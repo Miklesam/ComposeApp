@@ -16,6 +16,9 @@ import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.miklesam.composeapp.domain.Recipe
+import com.miklesam.composeapp.network.RecipeNetworkEntity
+import com.miklesam.composeapp.network.RecipeNetworkMapper
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
