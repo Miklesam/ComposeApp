@@ -25,7 +25,7 @@ class RecipeNetworkMapper : EntityMapper<RecipeNetworkEntity, Recipe> {
             title = domainModule.title,
             publisher = domainModule.publisher,
             featuredImage = domainModule.featuredImage,
-            rating = domainModule.rating,M
+            rating = domainModule.rating,
             description = domainModule.description,
             cookingInstructions = domainModule.cookingInstructions,
             ingredients = domainModule.ingredients,
