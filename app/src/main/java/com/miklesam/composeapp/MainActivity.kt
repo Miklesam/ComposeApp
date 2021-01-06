@@ -16,17 +16,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var someString: String
-    @Inject
-    lateinit var app: RecipeApplication
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d("MainActivity", "onCreate: ${someString}")
-        Log.d("MainActivity", "onCreate: ${app}")
     }
 
 }
