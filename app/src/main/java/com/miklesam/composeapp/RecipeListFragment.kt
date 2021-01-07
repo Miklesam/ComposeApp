@@ -1,6 +1,7 @@
 package com.miklesam.composeapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,14 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class RecipeListFragment : Fragment() {
 
-    val viewModel :RecipeListViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        println("RECIPELIST: ${viewModel.getRepo()}")
-        println("RECIPELIST: ${viewModel.getRandomString()}")
-        println("RECIPELIST: ${viewModel.getToken()}")
-    }
+    val viewModel: RecipeListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +32,12 @@ class RecipeListFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
+
+                val recipies = viewModel.recipes.value
+
+                for (recipe in recipies){
+                    Log.d("RecipeListFr", "onCreateView: ${recipe.title}")
+                }
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Recipe List",
@@ -47,7 +47,7 @@ class RecipeListFragment : Fragment() {
                     )
                     Spacer(modifier = Modifier.padding(10.dp))
                     Button(onClick = {
-                        findNavController().navigate(R.id.viewRecipe)
+                        viewModel.newSearch()
                     }) {
                         Text(text = "To Recipe fragment")
                     }

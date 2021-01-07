@@ -20,11 +20,4 @@ object AppModule {
         return app as RecipeApplication
     }
 
-    @Singleton
-    @Provides
-    fun provideRandomString(): String {
-        return "Hey look a random String !!!"
-    }
-
-
 }

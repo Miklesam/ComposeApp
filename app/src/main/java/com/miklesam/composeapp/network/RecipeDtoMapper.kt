@@ -13,7 +13,7 @@ class RecipeDtoMapper : DomainMapper<RecipeDto, Recipe> {
             rating = model.rating,
             description = model.description,
             cookingInstructions = model.cookingInstructions,
-            ingredients = model.ingredients ?: listOf(),
+            ingredients = model.ingredients.orEmpty(),
             dateAdded = model.dateAdded,
             dateUpdated = model.dateUpdated
         )

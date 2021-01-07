@@ -1,27 +1,34 @@
 package com.miklesam.composeapp
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.miklesam.composeapp.domain.Recipe
 import com.miklesam.composeapp.repository.RecipeRepository
+import kotlinx.coroutines.launch
 import javax.inject.Named
 
 class RecipeListViewModel
 @ViewModelInject
 constructor(
-    private val randomString: String,
     private val repository: RecipeRepository,
     @Named("auth_token") private val token: String
 ) : ViewModel() {
-    init {
-        println("VIEWMODEL: $randomString")
-        println("VIEWMODEL: $repository")
-        println("VIEWMODEL: $token")
+
+    val recipes: MutableState<List<Recipe>> = mutableStateOf(listOf())
+
+    fun newSearch() {
+        viewModelScope.launch {
+            val result = repository.search(
+                token = token,
+                page = 1,
+                query = "chicken"
+            )
+            recipes.value = result
+        }
     }
 
-    fun getRepo() = repository
-
-    fun getRandomString() = randomString
-
-    fun getToken() = token
 
 }
