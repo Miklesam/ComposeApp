@@ -9,11 +9,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
 import com.miklesam.composeapp.R
 import com.miklesam.composeapp.domain.Recipe
+import com.miklesam.composeapp.loadPicture
 
 @Composable
 fun RecipeCard(
@@ -31,13 +33,16 @@ fun RecipeCard(
         elevation = 8.dp
     ) {
         Column {
-            recipe.featuredImage?.let { utl ->
-                Image(
-                    bitmap = imageResource(id = R.drawable.empty_plate),
-                    modifier = Modifier.fillMaxWidth()
-                        .preferredHeight(225.dp),
-                    contentScale = ContentScale.Crop
-                )
+            recipe.featuredImage?.let { url ->
+                val image= loadPicture(url = url, defImage = R.drawable.empty_plate).value
+                image?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        modifier = Modifier.fillMaxWidth()
+                            .preferredHeight(225.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
                 recipe.title?.let { title ->
                     Row(
                         modifier = Modifier
