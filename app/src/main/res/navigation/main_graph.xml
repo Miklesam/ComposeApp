@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/recipeListFragment"
-        android:name="com.miklesam.composeapp.RecipeListFragment"
+        android:name="com.miklesam.composeapp.presentation.RecipeListFragment"
         android:label="RecipeListFragment" >
         <action
             android:id="@+id/viewRecipe"
@@ -14,6 +14,6 @@
     </fragment>
     <fragment
         android:id="@+id/recipeFragment"
-        android:name="com.miklesam.composeapp.RecipeFragment"
+        android:name="com.miklesam.composeapp.presentation.RecipeFragment"
         android:label="RecipeFragment" />
 </navigation>

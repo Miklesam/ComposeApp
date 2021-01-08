@@ -1,4 +1,4 @@
-package com.miklesam.composeapp
+package com.miklesam.composeapp.presentation
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +18,10 @@ constructor(
 ) : ViewModel() {
 
     val recipes: MutableState<List<Recipe>> = mutableStateOf(listOf())
+
+    init {
+        newSearch()
+    }
 
     fun newSearch() {
         viewModelScope.launch {
