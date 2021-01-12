@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.miklesam.composeapp.domain.Recipe
 import com.miklesam.composeapp.repository.RecipeRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Named
 
@@ -22,18 +23,25 @@ constructor(
     val selectedCategory: MutableState<FoodCategory?> = mutableStateOf(null)
     var categoryScrollPosition: Float = 0f
 
+    val loading = mutableStateOf(false)
+
     init {
         newSearch()
     }
 
     fun newSearch() {
         viewModelScope.launch {
+            loading.value = true
+            resetSearchState()
+            delay(2000)
+
             val result = repository.search(
                 token = token,
                 page = 1,
                 query = query.value
             )
             recipes.value = result
+            loading.value = false
         }
     }
 
@@ -49,6 +57,16 @@ constructor(
 
     fun onChangeCategoryScrollPosition(position: Float) {
         categoryScrollPosition = position
+    }
+
+    private fun clearSelectedCategory() {
+        selectedCategory.value = null
+    }
+
+    private fun resetSearchState() {
+        recipes.value = listOf()
+        if (selectedCategory.value?.value != query.value)
+            clearSelectedCategory()
     }
 
 
