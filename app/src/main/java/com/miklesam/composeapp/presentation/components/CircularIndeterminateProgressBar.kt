@@ -7,6 +7,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.WithConstraints
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -17,35 +19,56 @@ fun CircularIndeterminateProgressBar(
 ) {
     if (isDisplayed) {
 
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
+        WithConstraints(
+            modifier = Modifier.fillMaxSize()
         ) {
-            val (progressBar, text) = createRefs()
+            val constraints = if (minWidth < 600.dp) {
+                myDecoupledConstrainets(0.3f)
+            } else {
+                myDecoupledConstrainets(0.7f)
+            }
 
-            CircularProgressIndicator(
-                modifier = Modifier.constrainAs(progressBar) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
-                color = MaterialTheme.colors.primary
-            )
-            Text(
-                text = "Loading...",
-                style = TextStyle(
-                    color = Color.Black,
-                    fontSize = TextUnit.Companion.Sp(15)
-                ),
-                modifier = Modifier.constrainAs(text){
-                    top.linkTo(progressBar.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-            )
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxSize(),
+                constraintSet = constraints
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.layoutId("progressBar"),
+                    color = MaterialTheme.colors.primary
+                )
+                Text(
+                    text = "Loading...",
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontSize = TextUnit.Companion.Sp(15)
+                    ),
+                    modifier = Modifier.layoutId("text"),
+                )
+            }
+
         }
 
+    }
+}
+
+private fun myDecoupledConstrainets(verticalBias: Float): ConstraintSet {
+    return ConstraintSet {
+        val guidline = createGuidelineFromTop(verticalBias)
+        val progressBar = createRefFor("progressBar")
+        val text = createRefFor("text")
+
+        constrain(progressBar) {
+            top.linkTo(guidline)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
+
+        constrain(text) {
+            top.linkTo(progressBar.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
 
     }
 }
