@@ -14,60 +14,22 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CircularIndeterminateProgressBar(
-    isDisplayed: Boolean
-) {
-    if (isDisplayed) {
-
-        WithConstraints(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            val constraints = if (minWidth < 600.dp) {
-                myDecoupledConstrainets(0.3f)
-            } else {
-                myDecoupledConstrainets(0.7f)
-            }
-
-            ConstraintLayout(
+fun CircularIndeterminateProgressBar(isDisplayed: Boolean){
+    if(isDisplayed){
+        ConstraintLayout(
+            modifier = Modifier.fillMaxSize(),
+        ){
+            val (progressBar) = createRefs()
+            val topBias = createGuidelineFromTop(0.3f)
+            CircularProgressIndicator(
                 modifier = Modifier
-                    .fillMaxSize(),
-                constraintSet = constraints
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.layoutId("progressBar"),
-                    color = MaterialTheme.colors.primary
-                )
-                Text(
-                    text = "Loading...",
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = TextUnit.Companion.Sp(15)
-                    ),
-                    modifier = Modifier.layoutId("text"),
-                )
-            }
-
-        }
-
-    }
-}
-
-private fun myDecoupledConstrainets(verticalBias: Float): ConstraintSet {
-    return ConstraintSet {
-        val guidline = createGuidelineFromTop(verticalBias)
-        val progressBar = createRefFor("progressBar")
-        val text = createRefFor("text")
-
-        constrain(progressBar) {
-            top.linkTo(guidline)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        }
-
-        constrain(text) {
-            top.linkTo(progressBar.bottom)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
+                    .constrainAs(progressBar) {
+                        top.linkTo(topBias)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                    },
+                color = MaterialTheme.colors.primary
+            )
         }
 
     }

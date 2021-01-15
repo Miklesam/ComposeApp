@@ -23,10 +23,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.miklesam.composeapp.presentation.components.CircularIndeterminateProgressBar
-import com.miklesam.composeapp.presentation.components.FoodCategoryChip
-import com.miklesam.composeapp.presentation.components.RecipeCard
-import com.miklesam.composeapp.presentation.components.SearchAppBar
+import com.miklesam.composeapp.presentation.components.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.security.Key
 
@@ -60,7 +57,8 @@ class RecipeListFragment : Fragment() {
                         onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
                         onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition
                     )
-                    Box(
+                    PulsingDemo()
+                    /*Box(
                         modifier = Modifier
                             .fillMaxSize()
                     ) {
@@ -72,7 +70,7 @@ class RecipeListFragment : Fragment() {
                             }
                         }
                         CircularIndeterminateProgressBar(isDisplayed = loading)
-                    }
+                    }*/
                 }
             }
         }
