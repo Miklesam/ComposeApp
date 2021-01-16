@@ -57,7 +57,27 @@ class RecipeListFragment : Fragment() {
                         onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
                         onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition
                     )
-                    PulsingDemo()
+                    val state =
+                        remember { mutableStateOf(HeartAnimationDefinition.HeartButtonState.IDLE) }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(top = 10.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        AnimationHeartButton(
+                            modifier = Modifier,
+                            buttonState = state,
+                            onToggle = {
+                                state.value =
+                                    if (state.value == HeartAnimationDefinition.HeartButtonState.IDLE) HeartAnimationDefinition.HeartButtonState.ACTIVE
+                                    else HeartAnimationDefinition.HeartButtonState.IDLE
+                            }
+                        )
+                    }
+                    //PulsingDemo()
                     /*Box(
                         modifier = Modifier
                             .fillMaxSize()
