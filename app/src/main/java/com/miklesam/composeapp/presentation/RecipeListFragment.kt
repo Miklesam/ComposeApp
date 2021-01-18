@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Space
 import androidx.compose.foundation.ScrollableRow
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -12,9 +14,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.TextStyle
@@ -60,24 +65,8 @@ class RecipeListFragment : Fragment() {
                     val state =
                         remember { mutableStateOf(HeartAnimationDefinition.HeartButtonState.IDLE) }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .padding(top = 10.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        AnimationHeartButton(
-                            modifier = Modifier,
-                            buttonState = state,
-                            onToggle = {
-                                state.value =
-                                    if (state.value == HeartAnimationDefinition.HeartButtonState.IDLE) HeartAnimationDefinition.HeartButtonState.ACTIVE
-                                    else HeartAnimationDefinition.HeartButtonState.IDLE
-                            }
-                        )
-                    }
-                    //PulsingDemo()
+
+                    GradientDemo()
                     /*Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -96,5 +85,28 @@ class RecipeListFragment : Fragment() {
         }
     }
 
+
+}
+
+@Composable
+fun GradientDemo() {
+    val colors = listOf(
+        Color.Blue,
+        Color.Red,
+        Color.Blue
+    )
+    val brush = linearGradient(
+        colors,
+        start = Offset(200f, 1g00f),
+        end = Offset(400f, 400f)
+    )
+
+    Surface(shape = MaterialTheme.shapes.small) {
+        Spacer(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(brush = brush)
+        )
+    }
 
 }
