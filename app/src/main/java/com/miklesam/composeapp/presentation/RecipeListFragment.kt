@@ -97,7 +97,7 @@ fun GradientDemo() {
     )
     val brush = linearGradient(
         colors,
-        start = Offset(200f, 1g00f),
+        start = Offset(200f, 200f),
         end = Offset(400f, 400f)
     )
 
