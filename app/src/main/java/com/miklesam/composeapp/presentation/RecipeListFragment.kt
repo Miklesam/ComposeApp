@@ -66,7 +66,7 @@ class RecipeListFragment : Fragment() {
                         remember { mutableStateOf(HeartAnimationDefinition.HeartButtonState.IDLE) }
 
 
-                    GradientDemo()
+                    LoadingRecipeListShimmer(imageHeight = 250.dp)
                     /*Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -85,28 +85,5 @@ class RecipeListFragment : Fragment() {
         }
     }
 
-
-}
-
-@Composable
-fun GradientDemo() {
-    val colors = listOf(
-        Color.Blue,
-        Color.Red,
-        Color.Blue
-    )
-    val brush = linearGradient(
-        colors,
-        start = Offset(200f, 200f),
-        end = Offset(400f, 400f)
-    )
-
-    Surface(shape = MaterialTheme.shapes.small) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(brush = brush)
-        )
-    }
 
 }
