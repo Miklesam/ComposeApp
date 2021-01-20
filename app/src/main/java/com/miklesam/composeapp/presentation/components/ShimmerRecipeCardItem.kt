@@ -10,6 +10,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 
 @Composable
@@ -18,11 +19,12 @@ fun ShimmerRecipeCardItem(
     cardHeight: Dp,
     xShimmer: Float,
     yShimmer: Float,
-    padding: Dp
+    padding: Dp,
+    gradientWidth: Float
 ) {
     val brush = Brush.linearGradient(
         colors,
-        start = Offset(xShimmer - 100f, yShimmer - 100f),
+        start = Offset(xShimmer - gradientWidth, yShimmer - gradientWidth),
         end = Offset(xShimmer, yShimmer)
     )
     Column(
@@ -34,6 +36,15 @@ fun ShimmerRecipeCardItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .preferredHeight(cardHeight)
+                    .background(brush = brush)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Surface(shape = MaterialTheme.shapes.small) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .preferredHeight(cardHeight / 10)
                     .background(brush = brush)
             )
         }

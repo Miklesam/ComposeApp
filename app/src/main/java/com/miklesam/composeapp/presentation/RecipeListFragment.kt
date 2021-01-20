@@ -66,20 +66,24 @@ class RecipeListFragment : Fragment() {
                         remember { mutableStateOf(HeartAnimationDefinition.HeartButtonState.IDLE) }
 
 
-                    LoadingRecipeListShimmer(imageHeight = 250.dp)
-                    /*Box(
+                    //LoadingRecipeListShimmer(imageHeight = 250.dp)
+                    Box(
                         modifier = Modifier
                             .fillMaxSize()
                     ) {
-                        LazyColumn {
-                            itemsIndexed(
-                                items = recipes
-                            ) { index, recipe ->
-                                RecipeCard(recipe = recipe, onClick = {})
+                        if (loading) {
+                            LoadingRecipeListShimmer(imageHeight = 250.dp)
+                        } else {
+                            LazyColumn {
+                                itemsIndexed(
+                                    items = recipes
+                                ) { index, recipe ->
+                                    RecipeCard(recipe = recipe, onClick = {})
+                                }
                             }
                         }
                         CircularIndeterminateProgressBar(isDisplayed = loading)
-                    }*/
+                    }
                 }
             }
         }

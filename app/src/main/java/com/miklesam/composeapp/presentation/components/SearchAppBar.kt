@@ -73,7 +73,8 @@ fun SearchAppBar(
                     .fillMaxWidth()
                     .padding(
                         start = 8.dp,
-                        end = 8.dp
+                        end = 8.dp,
+                        bottom = 8.dp
                     ),
                 scrollState = scrollState
             ) {

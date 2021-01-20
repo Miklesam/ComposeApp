@@ -1,6 +1,7 @@
 package com.miklesam.composeapp.presentation.components
 
 import androidx.compose.animation.transition
+import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
@@ -30,7 +31,6 @@ fun LoadingRecipeListShimmer(
             ShimmerAnimationDefinitions(
                 widthPx = cardWidthPx,
                 heightPx = cardHeightPx,
-                gradientWidth = 100f
             )
         }
         val cardShimmerTranslateAnim = transition(
@@ -47,13 +47,20 @@ fun LoadingRecipeListShimmer(
         val xCardShimmer = cardShimmerTranslateAnim[cardAnimationDefinitions.xShimerPropKey]
         val yCardShimmer = cardShimmerTranslateAnim[cardAnimationDefinitions.yShimerPropKey]
 
-        ShimmerRecipeCardItem(
-            colors = colors,
-            cardHeight = imageHeight,
-            xShimmer = xCardShimmer,
-            yShimmer = yCardShimmer,
-            padding = padding
-        )
+        ScrollableColumn {
+            repeat(5) {
+                ShimmerRecipeCardItem(
+                    colors = colors,
+                    cardHeight = imageHeight,
+                    xShimmer = xCardShimmer,
+                    yShimmer = yCardShimmer,
+                    padding = padding,
+                    gradientWidth = cardAnimationDefinitions.gradientWidth
+                )
+            }
+
+        }
+
     }
 
 }

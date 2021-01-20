@@ -6,8 +6,13 @@ import com.miklesam.composeapp.presentation.util.ShimmerAnimationDefinitions.Ani
 class ShimmerAnimationDefinitions(
     private val widthPx: Float,
     private val heightPx: Float,
-    private val gradientWidth: Float
-) {
+
+    ) {
+    var gradientWidth: Float
+
+    init {
+        gradientWidth = 0.2f * heightPx
+    }
 
     enum class AnimationState {
         START, END
