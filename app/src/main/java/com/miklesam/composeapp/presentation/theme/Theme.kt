@@ -5,6 +5,7 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import com.miklesam.composeapp.presentation.components.AppShapes
 
 private val LightThemeColors = lightColors(
     primary = Blue600,
@@ -40,7 +41,9 @@ fun AppTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
-        colors = if (darkTheme) DarkThemeColors else LightThemeColors
+        colors = if (darkTheme) DarkThemeColors else LightThemeColors,
+        typography = QuickSandTypography,
+        shapes = AppShapes
     ) {
         content()
     }
