@@ -28,12 +28,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.miklesam.composeapp.RecipeApplication
 import com.miklesam.composeapp.presentation.components.*
+import com.miklesam.composeapp.presentation.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.security.Key
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RecipeListFragment : Fragment() {
+
+    @Inject
+
+    lateinit var application: RecipeApplication
 
     val viewModel: RecipeListViewModel by viewModels()
 
@@ -45,46 +52,56 @@ class RecipeListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
 
-                val recipes = viewModel.recipes.value
+                AppTheme(darkTheme = application.isDark.value) {
+                    val recipes = viewModel.recipes.value
 
-                val query = viewModel.query.value
+                    val query = viewModel.query.value
 
-                val selectedCategory = viewModel.selectedCategory.value
+                    val selectedCategory = viewModel.selectedCategory.value
 
-                val loading = viewModel.loading.value
-                Column {
-                    SearchAppBar(
-                        query = query,
-                        onQueryChanged = viewModel::onQueryChanged,
-                        onExecuteSearch = viewModel::newSearch,
-                        scrollPosition = viewModel.categoryScrollPosition,
-                        selectedCategory = selectedCategory,
-                        onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                        onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition
-                    )
-                    val state =
-                        remember { mutableStateOf(HeartAnimationDefinition.HeartButtonState.IDLE) }
+                    val loading = viewModel.loading.value
+                    Column {
+                        SearchAppBar(
+                            query = query,
+                            onQueryChanged = viewModel::onQueryChanged,
+                            onExecuteSearch = viewModel::newSearch,
+                            scrollPosition = viewModel.categoryScrollPosition,
+                            selectedCategory = selectedCategory,
+                            onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+                            onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
+                            onToggleTheme = {
+                                application.toggleLightTheme()
+                            }
+                        )
+                        val state =
+                            remember { mutableStateOf(HeartAnimationDefinition.HeartButtonState.IDLE) }
 
 
-                    //LoadingRecipeListShimmer(imageHeight = 250.dp)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        if (loading) {
-                            LoadingRecipeListShimmer(imageHeight = 250.dp)
-                        } else {
-                            LazyColumn {
-                                itemsIndexed(
-                                    items = recipes
-                                ) { index, recipe ->
-                                    RecipeCard(recipe = recipe, onClick = {})
+                        //LoadingRecipeListShimmer(imageHeight = 250.dp)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    color = MaterialTheme.colors.background
+                                )
+                        ) {
+                            if (loading) {
+                                LoadingRecipeListShimmer(imageHeight = 250.dp)
+                            } else {
+                                LazyColumn {
+                                    itemsIndexed(
+                                        items = recipes
+                                    ) { index, recipe ->
+                                        RecipeCard(recipe = recipe, onClick = {})
+                                    }
                                 }
                             }
+                            CircularIndeterminateProgressBar(isDisplayed = loading)
                         }
-                        CircularIndeterminateProgressBar(isDisplayed = loading)
                     }
                 }
+
+
             }
         }
     }
