@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Space
 import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -30,10 +31,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.miklesam.composeapp.RecipeApplication
 import com.miklesam.composeapp.presentation.components.*
 import com.miklesam.composeapp.presentation.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.security.Key
 import javax.inject.Inject
 
@@ -46,6 +49,7 @@ class RecipeListFragment : Fragment() {
 
     val viewModel: RecipeListViewModel by viewModels()
 
+    @ExperimentalMaterialApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,8 +57,32 @@ class RecipeListFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
+                val isShowing = remember { mutableStateOf(false) }
+                val snackbarHostState = remember { SnackbarHostState() }
 
-                AppTheme(darkTheme = application.isDark.value) {
+                Column {
+                    Button(
+                        onClick = {
+                            lifecycleScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = "Look a snackbar",
+                                    actionLabel = "Hide",
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }
+
+                    ) {
+                        Text(text = "Show snackBar")
+                    }
+                    DecoupledSnackbarDemo(snackbarHostState = snackbarHostState)
+                    /*SnackBarDemo(isShowing.value) {
+                        isShowing.value = false
+                    }*/
+                }
+
+
+                /*AppTheme(darkTheme = application.isDark.value) {
                     val recipes = viewModel.recipes.value
 
                     val query = viewModel.query.value
@@ -77,12 +105,6 @@ class RecipeListFragment : Fragment() {
                                     application.toggleLightTheme()
                                 }
                             )
-                        },
-                        bottomBar = {
-                            MyBottomBar()
-                        },
-                        drawerContent = {
-                            myDrawer()
                         }
                     ) {
                         Box(
@@ -106,7 +128,7 @@ class RecipeListFragment : Fragment() {
                             CircularIndeterminateProgressBar(isDisplayed = loading)
                         }
                     }
-                }
+                }*/
 
 
             }
@@ -116,36 +138,69 @@ class RecipeListFragment : Fragment() {
 
 }
 
+@ExperimentalMaterialApi
 @Composable
-fun MyBottomBar() {
-    BottomNavigation(
-        elevation = 12.dp
-    ) {
-        BottomNavigationItem(
-            icon = { Icon(Icons.Default.BrokenImage) },
-            selected = false,
-            onClick = { }
-        )
-        BottomNavigationItem(
-            icon = { Icon(Icons.Default.Search) },
-            selected = true,
-            onClick = { }
-        )
-        BottomNavigationItem(
-            icon = { Icon(Icons.Default.AccountBalanceWallet) },
-            selected = false,
-            onClick = { }
+fun DecoupledSnackbarDemo(
+    snackbarHostState: SnackbarHostState
+) {
+    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        val snackBar = createRef()
+        SnackbarHost(
+            modifier = Modifier.constrainAs(snackBar) {
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            },
+            hostState = snackbarHostState,
+            snackbar = {
+                Snackbar(
+                    action = {
+                        TextButton(
+                            onClick = {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                            }
+                        ) {
+                            Text(
+                                text = snackbarHostState.currentSnackbarData?.actionLabel ?: ""
+                            )
+                        }
+                    }
+                ) {
+                    Text(
+                        text = snackbarHostState.currentSnackbarData?.message ?: "",
+                        style = TextStyle(color = Color.White)
+                    )
+                }
+            }
         )
     }
 }
 
+
 @Composable
-fun myDrawer(){
-    Column() {
-        Text(text = "Item1")
-        Text(text = "Item2")
-        Text(text = "Item3")
-        Text(text = "Item4")
-        Text(text = "Item5")
+fun SnackBarDemo(
+    isShowing: Boolean,
+    onHideSnackBar: () -> Unit
+) {
+    if (isShowing) {
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+            val snackBar = createRef()
+            Snackbar(
+                modifier = Modifier.constrainAs(snackBar) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+                action = {
+                    Text(
+                        text = "Hide",
+                        modifier = Modifier.clickable(onClick = onHideSnackBar),
+                        style = MaterialTheme.typography.h5
+                    )
+                }
+            ) {
+                Text(text = "Hey look a snackbar")
+            }
+        }
     }
 }
