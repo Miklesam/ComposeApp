@@ -13,6 +13,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -60,29 +62,34 @@ class RecipeListFragment : Fragment() {
                     val selectedCategory = viewModel.selectedCategory.value
 
                     val loading = viewModel.loading.value
-                    Column {
-                        SearchAppBar(
-                            query = query,
-                            onQueryChanged = viewModel::onQueryChanged,
-                            onExecuteSearch = viewModel::newSearch,
-                            scrollPosition = viewModel.categoryScrollPosition,
-                            selectedCategory = selectedCategory,
-                            onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                            onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
-                            onToggleTheme = {
-                                application.toggleLightTheme()
-                            }
-                        )
-                        val state =
-                            remember { mutableStateOf(HeartAnimationDefinition.HeartButtonState.IDLE) }
 
-
-                        //LoadingRecipeListShimmer(imageHeight = 250.dp)
+                    Scaffold(
+                        topBar = {
+                            SearchAppBar(
+                                query = query,
+                                onQueryChanged = viewModel::onQueryChanged,
+                                onExecuteSearch = viewModel::newSearch,
+                                scrollPosition = viewModel.categoryScrollPosition,
+                                selectedCategory = selectedCategory,
+                                onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+                                onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
+                                onToggleTheme = {
+                                    application.toggleLightTheme()
+                                }
+                            )
+                        },
+                        bottomBar = {
+                            MyBottomBar()
+                        },
+                        drawerContent = {
+                            myDrawer()
+                        }
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(
-                                    color = MaterialTheme.colors.background
+                                    color = MaterialTheme.colors.surface
                                 )
                         ) {
                             if (loading) {
@@ -107,4 +114,38 @@ class RecipeListFragment : Fragment() {
     }
 
 
+}
+
+@Composable
+fun MyBottomBar() {
+    BottomNavigation(
+        elevation = 12.dp
+    ) {
+        BottomNavigationItem(
+            icon = { Icon(Icons.Default.BrokenImage) },
+            selected = false,
+            onClick = { }
+        )
+        BottomNavigationItem(
+            icon = { Icon(Icons.Default.Search) },
+            selected = true,
+            onClick = { }
+        )
+        BottomNavigationItem(
+            icon = { Icon(Icons.Default.AccountBalanceWallet) },
+            selected = false,
+            onClick = { }
+        )
+    }
+}
+
+@Composable
+fun myDrawer(){
+    Column() {
+        Text(text = "Item1")
+        Text(text = "Item2")
+        Text(text = "Item3")
+        Text(text = "Item4")
+        Text(text = "Item5")
+    }
 }
