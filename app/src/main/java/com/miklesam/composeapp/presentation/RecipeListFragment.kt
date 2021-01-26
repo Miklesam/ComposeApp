@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
@@ -35,17 +36,23 @@ import androidx.lifecycle.lifecycleScope
 import com.miklesam.composeapp.RecipeApplication
 import com.miklesam.composeapp.presentation.components.*
 import com.miklesam.composeapp.presentation.theme.AppTheme
+import com.miklesam.composeapp.presentation.util.SnackbarController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import java.security.Key
 import javax.inject.Inject
 
+@ExperimentalMaterialApi
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class RecipeListFragment : Fragment() {
 
     @Inject
 
     lateinit var application: RecipeApplication
+
+    private val snackbarController = SnackbarController(lifecycleScope)
 
     val viewModel: RecipeListViewModel by viewModels()
 
@@ -57,32 +64,7 @@ class RecipeListFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                val isShowing = remember { mutableStateOf(false) }
-                val snackbarHostState = remember { SnackbarHostState() }
-
-                Column {
-                    Button(
-                        onClick = {
-                            lifecycleScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    message = "Look a snackbar",
-                                    actionLabel = "Hide",
-                                    duration = SnackbarDuration.Short
-                                )
-                            }
-                        }
-
-                    ) {
-                        Text(text = "Show snackBar")
-                    }
-                    DecoupledSnackbarDemo(snackbarHostState = snackbarHostState)
-                    /*SnackBarDemo(isShowing.value) {
-                        isShowing.value = false
-                    }*/
-                }
-
-
-                /*AppTheme(darkTheme = application.isDark.value) {
+                AppTheme(darkTheme = application.isDark.value) {
                     val recipes = viewModel.recipes.value
 
                     val query = viewModel.query.value
@@ -90,13 +72,27 @@ class RecipeListFragment : Fragment() {
                     val selectedCategory = viewModel.selectedCategory.value
 
                     val loading = viewModel.loading.value
+                    lifecycleScope
+                    val scafoldState = rememberScaffoldState()
 
                     Scaffold(
                         topBar = {
                             SearchAppBar(
                                 query = query,
                                 onQueryChanged = viewModel::onQueryChanged,
-                                onExecuteSearch = viewModel::newSearch,
+                                onExecuteSearch = {
+                                    if (viewModel.selectedCategory.value?.value == "Milk") {
+                                        snackbarController.getScope().launch {
+                                            snackbarController.showSnackbar(
+                                                scaffoldState = scafoldState,
+                                                message = "Invalid category: MILK",
+                                                actionLabel = "Hide"
+                                            )
+                                        }
+                                    } else {
+                                        viewModel.newSearch()
+                                    }
+                                },
                                 scrollPosition = viewModel.categoryScrollPosition,
                                 selectedCategory = selectedCategory,
                                 onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
@@ -105,6 +101,10 @@ class RecipeListFragment : Fragment() {
                                     application.toggleLightTheme()
                                 }
                             )
+                        },
+                        scaffoldState = scafoldState,
+                        snackbarHost = {
+                            scafoldState.snackbarHostState
                         }
                     ) {
                         Box(
@@ -126,81 +126,21 @@ class RecipeListFragment : Fragment() {
                                 }
                             }
                             CircularIndeterminateProgressBar(isDisplayed = loading)
-                        }
-                    }
-                }*/
-
-
-            }
-        }
-    }
-
-
-}
-
-@ExperimentalMaterialApi
-@Composable
-fun DecoupledSnackbarDemo(
-    snackbarHostState: SnackbarHostState
-) {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val snackBar = createRef()
-        SnackbarHost(
-            modifier = Modifier.constrainAs(snackBar) {
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            },
-            hostState = snackbarHostState,
-            snackbar = {
-                Snackbar(
-                    action = {
-                        TextButton(
-                            onClick = {
-                                snackbarHostState.currentSnackbarData?.dismiss()
-                            }
-                        ) {
-                            Text(
-                                text = snackbarHostState.currentSnackbarData?.actionLabel ?: ""
+                            DefaultSnackBar(
+                                snackbarHostState = scafoldState.snackbarHostState,
+                                onDismiss = {
+                                    scafoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                                },
+                                modifier = Modifier.align(Alignment.BottomCenter)
                             )
                         }
                     }
-                ) {
-                    Text(
-                        text = snackbarHostState.currentSnackbarData?.message ?: "",
-                        style = TextStyle(color = Color.White)
-                    )
                 }
-            }
-        )
-    }
-}
 
 
-@Composable
-fun SnackBarDemo(
-    isShowing: Boolean,
-    onHideSnackBar: () -> Unit
-) {
-    if (isShowing) {
-        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-            val snackBar = createRef()
-            Snackbar(
-                modifier = Modifier.constrainAs(snackBar) {
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
-                action = {
-                    Text(
-                        text = "Hide",
-                        modifier = Modifier.clickable(onClick = onHideSnackBar),
-                        style = MaterialTheme.typography.h5
-                    )
-                }
-            ) {
-                Text(text = "Hey look a snackbar")
             }
         }
     }
+
+
 }
